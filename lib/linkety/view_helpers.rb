@@ -26,15 +26,13 @@ module Linkety
     #
     # Returns a String anchor tag.
     def active_link_to_if(truth, text, url, options = {})
-      active_class   = options[:active_class] || 'active'
-      inactive_class = options[:inactive_class] || 'inactive'
-      inactive_url   = options[:inactive_url] || "#"
-      klasses        = (options.delete(:class) || "").split(' ')
+      active_class   = options[:active_class]   || "active"
+      inactive_class = options[:inactive_class] || "inactive"
+      inactive_url   = options[:inactive_url]   || "#"
+      klasses        = (options.delete(:class)  || "").split(' ')
       
-      unless truth
-        klasses << inactive_class
-        url = inactive_url
-      end
+      klasses << (truth ? active_class : inactive_class)
+      url = inactive_url unless truth
       
       link_to(text, url, options.merge(:class => klasses.join(' ')))
     end
@@ -69,12 +67,12 @@ module Linkety
     #           you may set the following:
     #           :current_class - The String class to add if the link is current
     #                            (default: 'current').
-    #           :pattern       - A Regexp pattern to match against the current path
-    #                            (default: the link URL path).
+    #           :pattern       - A Regexp pattern to match against the current 
+    #                            path (default: the link URL path).
     #
     # Returns a String anchor tag.
     def current_link_to(text, url, options = {})
-      current_class = options[:current_class] || 'current'
+      current_class = options[:current_class] || "current"
       klasses       = (options.delete(:class) || "").split(' ')
       href_path     = extract_path(url)
       pattern       = options[:pattern] || Regexp.new(href_path)
@@ -106,8 +104,9 @@ module Linkety
     #
     # Returns a String.
     def extract_path(uri)
-      path = /(^\w+)*(:\/\/){0,1}(\w|\.)*(\/.*)/.match(uri)[4]
-      path.split("?")[0]
+      matches = /(^\w+)*(:\/\/){0,1}(\w|\.)*(\/.*)/.match(uri)
+      path = matches ? matches[3] : ""
+      path.split("?")[0] || ""
     end
   end
 end

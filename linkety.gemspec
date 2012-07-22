@@ -14,4 +14,8 @@ Gem::Specification.new do |gem|
   gem.name          = "linkety"
   gem.require_paths = ["lib"]
   gem.version       = Linkety::VERSION
+  
+  gem.add_development_dependency "shoulda-context", "~> 1.0"
+  gem.add_development_dependency "activesupport", "~> 3.0"
+  gem.add_development_dependency "actionpack", "~> 3.0"
 end
