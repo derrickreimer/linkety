@@ -13,7 +13,8 @@ class Linkety::ViewHelpersTest < Test::Unit::TestCase
   end
   
   def extract_text(tag)
-    
+    groups = /<a.*>(.*)<\/a>/.match(tag)
+    text = groups ? groups[1].to_s : ""
   end
   
   def extract_attribute(attribute, tag)
@@ -64,6 +65,18 @@ class Linkety::ViewHelpersTest < Test::Unit::TestCase
         assert_equal "", extract_href(tag)
       end
     end
+    
+    context "#extract_text" do
+      should "return the anchor text" do
+        tag = "<a href='http://google.com' class='one two three'>Google</a>"
+        assert_equal "Google", extract_text(tag)
+      end
+      
+      should "return an empty string if link has not text" do
+        tag = "<a href='http://google.com' class='one two three'></a>"
+        assert_equal "", extract_text(tag)
+      end
+    end
   end
   
   context "#active_link_to_if" do
@@ -104,6 +117,11 @@ class Linkety::ViewHelpersTest < Test::Unit::TestCase
       tag = active_link_to_if(false, "Foobar", "http://google.com", :inactive_url => "http://yahoo.com")
       assert_equal "http://yahoo.com", extract_href(tag)
     end
+    
+    should "have the right text" do
+      tag = active_link_to_if(true, "Foobar", "http://google.com")
+      assert_equal "Foobar", extract_text(tag)
+    end
   end
   
   context "#current_link_to_if" do
@@ -131,6 +149,12 @@ class Linkety::ViewHelpersTest < Test::Unit::TestCase
       assert !extract_classes(tag).include?("current")
     end
     
+    should "match root path" do
+      @request = request_for_path("/")
+      tag = current_link_to("Google", "http://google.com/")
+      assert extract_classes(tag).include?("current")
+    end
+    
     should "match current with a query string" do
       @request = request_for_path("/search?q=ruby")
       tag = current_link_to("Google", "http://google.com/search")
@@ -153,6 +177,12 @@ class Linkety::ViewHelpersTest < Test::Unit::TestCase
       @request = request_for_path("/foobar")
       tag = current_link_to("Google", "http://google.com/search", :pattern => /foobar/)
       assert extract_classes(tag).include?("current")
+    end
+    
+    should "have the right text" do
+      @request = request_for_path("/")
+      tag = current_link_to("Foobar", "http://google.com/")
+      assert_equal "Foobar", extract_text(tag)
     end
   end
 end
