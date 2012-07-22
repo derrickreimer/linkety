@@ -1,9 +1,15 @@
 require File.dirname(__FILE__) + '/../test_helper.rb'
 
 class Linkety::ViewHelpersTest < Test::Unit::TestCase
-  def setup
-    @view = ActionView::Base.new
-    @request = ActionController::TestRequest.new
+  include ActionView::Helpers::UrlHelper
+  include Linkety::ViewHelpers
+  
+  attr_accessor :request
+  
+  def request_for_path(path)
+    request = MiniTest::Mock.new
+    request.expect(:fullpath, path)
+    request
   end
   
   def extract_text(tag)
@@ -62,22 +68,22 @@ class Linkety::ViewHelpersTest < Test::Unit::TestCase
   
   context "#active_link_to_if" do
     should "be active if true" do
-      tag = @view.active_link_to_if(true, "Foobar", "http://google.com")
+      tag = active_link_to_if(true, "Foobar", "http://google.com")
       assert extract_classes(tag).include?("active")
     end
     
     should "be inactive if false" do
-      tag = @view.active_link_to_if(false, "Foobar", "http://google.com")
+      tag = active_link_to_if(false, "Foobar", "http://google.com")
       assert extract_classes(tag).include?("inactive")
     end
     
     should "change inactive URL to a hash" do
-      tag = @view.active_link_to_if(false, "Foobar", "http://google.com")
+      tag = active_link_to_if(false, "Foobar", "http://google.com")
       assert_equal "#", extract_href(tag)
     end
     
     should "append to given classes" do
-      tag = @view.active_link_to_if(false, "Foobar", "http://google.com", :class => "one two")
+      tag = active_link_to_if(false, "Foobar", "http://google.com", :class => "one two")
       klasses = extract_classes(tag)
       assert klasses.include?("one")
       assert klasses.include?("two")
@@ -85,18 +91,68 @@ class Linkety::ViewHelpersTest < Test::Unit::TestCase
     end
     
     should "use custom active class" do
-      tag = @view.active_link_to_if(true, "Foobar", "http://google.com", :active_class => "enabled")
+      tag = active_link_to_if(true, "Foobar", "http://google.com", :active_class => "enabled")
       assert extract_classes(tag).include?("enabled")
     end
     
     should "use custom inactive class" do
-      tag = @view.active_link_to_if(false, "Foobar", "http://google.com", :active_class => "disabled")
+      tag = active_link_to_if(false, "Foobar", "http://google.com", :active_class => "disabled")
       assert extract_classes(tag).include?("disabled")
     end
     
     should "use custom inactive URL" do
-      tag = @view.active_link_to_if(false, "Foobar", "http://google.com", :inactive_url => "http://yahoo.com")
+      tag = active_link_to_if(false, "Foobar", "http://google.com", :inactive_url => "http://yahoo.com")
       assert_equal "http://yahoo.com", extract_href(tag)
+    end
+  end
+  
+  context "#current_link_to_if" do
+    should "match current for full URL links" do
+      @request = request_for_path("/search")
+      tag = current_link_to("Google", "http://google.com/search")
+      assert extract_classes(tag).include?("current")
+    end
+    
+    should "not match different full URL links" do
+      @request = request_for_path("http://google.com/foo")
+      tag = current_link_to("Google", "http://google.com/search")
+      assert !extract_classes(tag).include?("current")
+    end
+    
+    should "match current for path links" do
+      @request = request_for_path("/search")
+      tag = current_link_to("Google", "/search")
+      assert extract_classes(tag).include?("current")
+    end
+    
+    should "not match different path links" do
+      @request = request_for_path("/foo")
+      tag = current_link_to("Google", "http://google.com/search")
+      assert !extract_classes(tag).include?("current")
+    end
+    
+    should "match current with a query string" do
+      @request = request_for_path("/search?q=ruby")
+      tag = current_link_to("Google", "http://google.com/search")
+      assert extract_classes(tag).include?("current")
+    end
+    
+    should "match current with additional segments" do
+      @request = request_for_path("/search/foo/bar")
+      tag = current_link_to("Google", "http://google.com/search")
+      assert extract_classes(tag).include?("current")
+    end
+    
+    should "use custom current class" do
+      @request = request_for_path("/search")
+      tag = current_link_to("Google", "http://google.com/search", :current_class => "active")
+      assert extract_classes(tag).include?("active")
+    end
+    
+    should "use custom pattern" do
+      @request = request_for_path("/foobar")
+      tag = current_link_to("Google", "http://google.com/search", :pattern => /foobar/)
+      assert extract_classes(tag).include?("current")
     end
   end
 end

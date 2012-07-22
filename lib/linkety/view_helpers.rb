@@ -87,7 +87,7 @@ module Linkety
     def current_path
       raise "A Request object must be present" unless request
       fullpath = request.fullpath.split("?")[0]
-      extract_path(full_path)
+      extract_path(fullpath)
     end
     
     # Private: Extract just the path portion of a URL without the query string.
@@ -105,7 +105,7 @@ module Linkety
     # Returns a String.
     def extract_path(uri)
       matches = /(^\w+)*(:\/\/){0,1}(\w|\.)*(\/.*)/.match(uri)
-      path = matches ? matches[3] : ""
+      path = matches ? matches[4] : ""
       path.split("?")[0] || ""
     end
   end
