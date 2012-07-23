@@ -2,6 +2,8 @@
 
 Linkety is a collection of handy link helpers for Rails views.
 
+Extracted from [Leadscreener](http://www.leadscreener.com).
+
 ## Installation
 
 Add this line to your application's Gemfile:
