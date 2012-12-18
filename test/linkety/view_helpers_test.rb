@@ -109,7 +109,7 @@ class Linkety::ViewHelpersTest < Test::Unit::TestCase
     end
     
     should "use custom inactive class" do
-      tag = active_link_to_if(false, "Foobar", "http://google.com", :active_class => "disabled")
+      tag = active_link_to_if(false, "Foobar", "http://google.com", :inactive_class => "disabled")
       assert extract_classes(tag).include?("disabled")
     end
     

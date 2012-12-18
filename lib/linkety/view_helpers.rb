@@ -28,9 +28,9 @@ module Linkety
     #
     # Returns a String anchor tag.
     def active_link_to_if(truth, text, url, options = {})
-      active_class   = options[:active_class]   || "active"
-      inactive_class = options[:inactive_class] || "inactive"
-      inactive_url   = options[:inactive_url]   || "#"
+      active_class   = options.delete(:active_class)   || "active"
+      inactive_class = options.delete(:inactive_class) || "inactive"
+      inactive_url   = options.delete(:inactive_url)   || "#"
       klasses        = (options.delete(:class)  || "").split(' ')
       
       klasses << (truth ? active_class : inactive_class)
@@ -74,10 +74,10 @@ module Linkety
     #
     # Returns a String anchor tag.
     def current_link_to(text, url, options = {})
-      current_class = options[:current_class] || "current"
+      current_class = options.delete(:current_class) || "current"
       klasses       = (options.delete(:class) || "").split(' ')
-      href_path     = extract_path(url)
-      pattern       = options[:pattern] || Regexp.new(href_path)
+      href_path     = _extract_path(url)
+      pattern       = options.delete(:pattern) || Regexp.new(href_path)
 
       klasses << current_class if _current_path =~ pattern
       link_to(text, url, options.merge(:class => klasses.join(' ')))
@@ -88,8 +88,8 @@ module Linkety
     # Returns a String.
     def _current_path
       raise "A Request object must be present" unless request
-      fullpath = request.fullpath.split("?")[0]
-      extract_path(fullpath)
+      fullpath = request.fullpath
+      _extract_path(fullpath)
     end
     
     # Private: Extract just the path portion of a URL without the query string.
@@ -105,7 +105,7 @@ module Linkety
     #   => "/foo/bar/que"
     #
     # Returns a String.
-    def extract_path(uri)
+    def _extract_path(uri)
       parsed_uri = URI(uri)
       parsed_uri.path
     end
