@@ -1,3 +1,5 @@
+require 'uri'
+
 module Linkety
   module ViewHelpers
     # Public: Generates an HTML anchor tag in either an active or inactive 
@@ -77,14 +79,14 @@ module Linkety
       href_path     = extract_path(url)
       pattern       = options[:pattern] || Regexp.new(href_path)
 
-      klasses << current_class if current_path =~ pattern
+      klasses << current_class if _current_path =~ pattern
       link_to(text, url, options.merge(:class => klasses.join(' ')))
     end
     
     # Private: The path of the current request.
     #
     # Returns a String.
-    def current_path
+    def _current_path
       raise "A Request object must be present" unless request
       fullpath = request.fullpath.split("?")[0]
       extract_path(fullpath)
@@ -104,9 +106,8 @@ module Linkety
     #
     # Returns a String.
     def extract_path(uri)
-      matches = /(^\w+)*(:\/\/){0,1}(\w|\.)*(\/.*)/.match(uri)
-      path = matches ? matches[4] : ""
-      path.split("?")[0] || ""
+      parsed_uri = URI(uri)
+      parsed_uri.path
     end
   end
 end
