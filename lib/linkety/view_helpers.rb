@@ -2,10 +2,6 @@ require "linkety/builder"
 
 module Linkety
   module ViewHelpers
-    def linkety_builder
-      @linkety_builder ||= Linkety::Builder.new(self, request)
-    end
-    
     # Public: Generates an HTML anchor tag in either an active or inactive 
     # state, depending on a given truth value.
     # 
@@ -71,6 +67,13 @@ module Linkety
     # Returns a String anchor tag.
     def current_link_to(text, url, options = {})
       linkety_builder.current_link_to(text, url, options)
+    end
+    
+    # Private: The builder object used to generate links.
+    #
+    # Returns a cached instance of Linkety::Builder.
+    def linkety_builder
+      @linkety_builder ||= Linkety::Builder.new(self, request)
     end
   end
 end
