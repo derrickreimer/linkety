@@ -23,9 +23,9 @@ Sometimes you want to add a specific class to a link if you are currently on the
 page the link points to. Navigation menus are a classic example of this scenario.
 Simply use the `current_link_to` like so:
 
-```ruby
+```html
 <ul class="main-menu">
-  <li><%= current_link_to "Home", home_url ></li>
+  <li><%= current_link_to "Home", home_url %></li>
 </ul>
 ```
 
