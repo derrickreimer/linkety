@@ -1,6 +1,7 @@
 # Linkety
 
-Linkety is a collection of handy link helpers for Rails views. 
+Linkety is a collection of handy link helpers for Rails views. Helpers include
+`current_link_to`, `active_link_to_if`, and `inactive_link_to_if`.
 
 ## Installation
 
@@ -18,7 +19,20 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+Sometimes you want to add a specific class to a link if you are currently on the
+page the link points to. Navigation menus are a classic example of this scenario.
+Simply use the `current_link_to` like so:
+
+```ruby
+<ul class="main-menu">
+  <li><%= current_link_to "Home", home_url ></li>
+</ul>
+```
+
+When you are on the home page, this helper with output a link with a `current`
+class. You can change the default class name by defining a `:current_class` option.
+If you want match the current URL against a custom regex instead of an exact path match, 
+simply pass in a regex object for the `:pattern` option.
 
 ## Contributing
 

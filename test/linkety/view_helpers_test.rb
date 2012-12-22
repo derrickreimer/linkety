@@ -124,7 +124,7 @@ class Linkety::ViewHelpersTest < Test::Unit::TestCase
     end
   end
   
-  context "#current_link_to_if" do
+  context "#current_link_to" do
     should "match current for full URL links" do
       @request = request_for_path("/search")
       tag = current_link_to("Google", "http://google.com/search")
