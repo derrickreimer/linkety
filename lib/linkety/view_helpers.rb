@@ -1,7 +1,11 @@
-require 'uri'
+require "linkety/builder"
 
 module Linkety
   module ViewHelpers
+    def linkety_builder
+      @linkety_builder ||= Linkety::Builder.new(self, request)
+    end
+    
     # Public: Generates an HTML anchor tag in either an active or inactive 
     # state, depending on a given truth value.
     # 
@@ -28,15 +32,7 @@ module Linkety
     #
     # Returns a String anchor tag.
     def active_link_to_if(truth, text, url, options = {})
-      active_class   = options.delete(:active_class)   || "active"
-      inactive_class = options.delete(:inactive_class) || "inactive"
-      inactive_url   = options.delete(:inactive_url)   || "#"
-      klasses        = (options.delete(:class)  || "").split(' ')
-      
-      klasses << (truth ? active_class : inactive_class)
-      url = inactive_url unless truth
-      
-      link_to(text, url, options.merge(:class => klasses.join(' ')))
+      linkety_builder.active_link_to_if(truth, text, url, options)
     end
     
     # Public: Generates an HTML anchor tag in either an inactive or active 
@@ -74,40 +70,7 @@ module Linkety
     #
     # Returns a String anchor tag.
     def current_link_to(text, url, options = {})
-      current_class = options.delete(:current_class) || "current"
-      klasses       = (options.delete(:class) || "").split(' ')
-      href_path     = _extract_path(url)
-      pattern       = options.delete(:pattern) || Regexp.new(href_path)
-
-      klasses << current_class if _current_path =~ pattern
-      link_to(text, url, options.merge(:class => klasses.join(' ')))
-    end
-    
-    # Private: The path of the current request.
-    #
-    # Returns a String.
-    def _current_path
-      raise "A Request object must be present" unless request
-      fullpath = request.fullpath
-      _extract_path(fullpath)
-    end
-    
-    # Private: Extract just the path portion of a URL without the query string.
-    #
-    # uri - A String URL.
-    #
-    # Examples
-    #
-    #   extract_path("http://google.com/foo/bar")
-    #   => "/foo/bar"
-    #
-    #   extract_path("/foo/bar/que?order=asc")
-    #   => "/foo/bar/que"
-    #
-    # Returns a String.
-    def _extract_path(uri)
-      parsed_uri = URI(uri)
-      parsed_uri.path
+      linkety_builder.current_link_to(text, url, options)
     end
   end
 end
