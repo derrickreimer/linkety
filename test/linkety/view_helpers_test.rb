@@ -161,12 +161,6 @@ class Linkety::ViewHelpersTest < Test::Unit::TestCase
       assert extract_classes(tag).include?("current")
     end
     
-    should "match current with additional segments" do
-      @request = request_for_path("/search/foo/bar")
-      tag = current_link_to("Google", "http://google.com/search")
-      assert extract_classes(tag).include?("current")
-    end
-    
     should "use custom current class" do
       @request = request_for_path("/search")
       tag = current_link_to("Google", "http://google.com/search", :current_class => "active")

@@ -1,8 +1,6 @@
 # Linkety
 
-Linkety is a collection of handy link helpers for Rails views.
-
-Extracted from [Leadscreener](http://www.leadscreener.com).
+Linkety is a collection of handy link helpers for Rails views. 
 
 ## Installation
 
