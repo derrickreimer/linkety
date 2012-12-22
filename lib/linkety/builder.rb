@@ -1,4 +1,4 @@
-require 'uri'
+require "uri"
 
 module Linkety
   class Builder
