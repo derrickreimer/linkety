@@ -69,6 +69,22 @@ module Linkety
       linkety_builder.current_link_to(text, url, options)
     end
     
+    # Public: Generates an HTML anchor tag that has a 'current' class if
+    # the truth value is true.
+    #
+    # truth   - A Boolean truth value.
+    # text    - A String of anchor text.
+    # url     - A String URL.
+    # options - A Hash of options. In addition to the regular #link_to options,
+    #           you may set the following:
+    #           :current_class - The String class to add if the link is current
+    #                            (default: 'current').
+    #
+    # Returns a String anchor tag.
+    def current_link_to_if(truth, text, url, options = {})
+      linkety_builder.current_link_to_if(truth, text, url, options)
+    end
+    
     # Private: The builder object used to generate links.
     #
     # Returns a cached instance of Linkety::Builder.

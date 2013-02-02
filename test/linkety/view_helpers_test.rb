@@ -179,4 +179,26 @@ class Linkety::ViewHelpersTest < Test::Unit::TestCase
       assert_equal "Foobar", extract_text(tag)
     end
   end
+  
+  context "#current_link_to_if" do
+    should "be current if true" do
+      tag = current_link_to_if(true, "Foobar", "http://google.com")
+      assert extract_classes(tag).include?("current")
+    end
+    
+    should "not be current if false" do
+      tag = current_link_to_if(false, "Foobar", "http://google.com")
+      assert !extract_classes(tag).include?("current")
+    end
+    
+    should "have the right text" do
+      tag = current_link_to_if(true, "Foobar", "http://google.com")
+      assert_equal "Foobar", extract_text(tag)
+    end
+    
+    should "have the right URL" do
+      tag = current_link_to_if(true, "Foobar", "http://google.com")
+      assert_equal "http://google.com", extract_href(tag)
+    end
+  end
 end
